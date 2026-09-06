@@ -8,11 +8,6 @@ import ReportPage from "./ReportPage";
 import type { CategoryRecord, CommunitySubmission, HitProduct, OriginConfidence, SubmissionKind } from "./types";
 import "./App.css";
 
-// Format a number as CAD, e.g. 3 -> "$3.00".
-function cad(n: number): string {
-  return `$${n.toFixed(2)}`;
-}
-
 // Shows the trust tier for a made-in-Canada claim. This IS the verification
 // learning made visible: users can weight each claim instead of trusting all
 // equally. "community" is labelled "User submission" (describe what it is, not
