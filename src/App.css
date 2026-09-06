@@ -1,7 +1,7 @@
 /* Tariff Lens — intentional styling (replaces the Vite starter CSS). */
 
 .app {
-  max-width: 1100px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 24px 24px 64px;
   text-align: left;
@@ -75,13 +75,14 @@
   vertical-align: top;
   word-wrap: break-word;
 }
-/* Column widths so nothing's too cramped (6 columns). */
-.product-table th:nth-child(1), .product-table td:nth-child(1) { width: 15%; }
-.product-table th:nth-child(2), .product-table td:nth-child(2) { width: 17%; }
-.product-table th:nth-child(3), .product-table td:nth-child(3) { width: 8%; }
-.product-table th:nth-child(4), .product-table td:nth-child(4) { width: 20%; }
-.product-table th:nth-child(5), .product-table td:nth-child(5) { width: 22%; }
-.product-table th:nth-child(6), .product-table td:nth-child(6) { width: 18%; }
+/* Column widths (6 columns). Community input gets the most room since it now
+   shows a full report sentence. */
+.product-table th:nth-child(1), .product-table td:nth-child(1) { width: 13%; }
+.product-table th:nth-child(2), .product-table td:nth-child(2) { width: 14%; }
+.product-table th:nth-child(3), .product-table td:nth-child(3) { width: 7%; }
+.product-table th:nth-child(4), .product-table td:nth-child(4) { width: 19%; }
+.product-table th:nth-child(5), .product-table td:nth-child(5) { width: 24%; }
+.product-table th:nth-child(6), .product-table td:nth-child(6) { width: 23%; }
 
 .input-callout {
   font-size: 13px;
@@ -405,7 +406,7 @@ button[type='submit'],
 /* --- community report text shown directly in the table cell --- */
 .report-text {
   font-size: 13px;
-  color: var(--text-h);
+  color: var(--text);
   cursor: pointer;
 }
 .more-reports {
