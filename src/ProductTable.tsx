@@ -197,7 +197,7 @@ function ProductTable({
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.productId} onClick={() => onOpenCategory(r.categoryId)}>
+              <tr key={r.productId}>
                 <td>{r.product}</td>
                 <td>{r.category}</td>
                 <td>{(r.tariffRate * 100).toFixed(0)}%</td>
@@ -233,10 +233,8 @@ function ProductTable({
                   )}
                 </td>
                 <td
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenCategory(r.categoryId, true);
-                  }}
+                  className="community-cell"
+                  onClick={() => onOpenCategory(r.categoryId, true)}
                 >
                   {(reportsByProduct[r.productId]?.length ?? 0) > 0 ? (
                     <span className="report-text">
@@ -282,12 +280,9 @@ function ProductTable({
         </p>
       </div>
 
-      <p className="table-note">
-        Tip: click any row for the full breakdown and community reports.
-      </p>
       <p className="verified-stamp">
         Tariff rates verified against the official Canada Dept. of Finance list ·
-        Last verified: Aug 30, 2026
+        Last verified: Sep 2, 2026
       </p>
     </div>
   );

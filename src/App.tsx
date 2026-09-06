@@ -426,7 +426,7 @@ function App() {
           className="link-button"
           onClick={() => setPage("how")}
         >
-          How this works · methodology · what this can't do
+          How this works · methodology · what this can't do · what's next
         </button>
       </footer>
     </main>

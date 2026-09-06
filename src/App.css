@@ -97,9 +97,7 @@
   background: var(--code-bg);
   font-weight: 600;
 }
-.product-table tbody tr {
-  cursor: pointer;
-}
+/* Rows are informational, not clickable. Only the community cell is interactive. */
 .product-table tbody tr:hover {
   background: var(--accent-bg);
 }
@@ -413,4 +411,12 @@ button[type='submit'],
   color: var(--accent);
   font-size: 12px;
   white-space: nowrap;
+}
+
+/* The community cell is the one interactive cell in each row. */
+.community-cell {
+  cursor: pointer;
+}
+.community-cell:hover {
+  background: var(--accent-bg);
 }
