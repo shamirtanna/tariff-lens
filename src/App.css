@@ -401,3 +401,15 @@ button[type='submit'],
   opacity: 0.8;
   margin: 4px 0;
 }
+
+/* --- community report text shown directly in the table cell --- */
+.report-text {
+  font-size: 13px;
+  color: var(--text-h);
+  cursor: pointer;
+}
+.more-reports {
+  color: var(--accent);
+  font-size: 12px;
+  white-space: nowrap;
+}

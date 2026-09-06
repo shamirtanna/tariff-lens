@@ -12,8 +12,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { categories } from "./data";
-import { countApprovedForProduct } from "./community";
-import type { Alternative } from "./types";
+import { getApprovedSubmissions } from "./community";
+import type { Alternative, CommunitySubmission } from "./types";
 
 interface Row {
   productId: string;
@@ -61,31 +61,35 @@ function ProductTable({
   onOpenCategory,
   onReportSighting,
 }: {
-  onOpenCategory: (id: string) => void;
+  onOpenCategory: (id: string, focusCommunity?: boolean) => void;
   onReportSighting: () => void;
 }) {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("product");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
-  // Community report counts per product, loaded async from the backend.
-  const [reportCounts, setReportCounts] = useState<Record<string, number>>({});
+  // Approved community submissions grouped by product id, loaded async.
+  const [reportsByProduct, setReportsByProduct] = useState<
+    Record<string, CommunitySubmission[]>
+  >({});
 
-  // Load approved-report counts once, after mount. If the backend is down these
-  // stay 0 and the table just shows no badges — graceful degradation.
+  // Load approved submissions per category once, after mount, and group them by
+  // product. If the backend is down this stays empty — graceful degradation.
   useEffect(() => {
     let cancelled = false;
-    async function loadCounts() {
-      const entries = await Promise.all(
-        categories.flatMap((c) =>
-          c.hitProducts.map(async (p) => {
-            const n = await countApprovedForProduct(p.id);
-            return [p.id, n] as const;
-          })
-        )
+    async function loadReports() {
+      const grouped: Record<string, CommunitySubmission[]> = {};
+      const perCategory = await Promise.all(
+        categories.map((c) => getApprovedSubmissions(c.id))
       );
-      if (!cancelled) setReportCounts(Object.fromEntries(entries));
+      for (const subs of perCategory) {
+        for (const s of subs) {
+          if (!s.productId) continue;
+          (grouped[s.productId] ??= []).push(s);
+        }
+      }
+      if (!cancelled) setReportsByProduct(grouped);
     }
-    loadCounts();
+    loadReports();
     return () => {
       cancelled = true;
     };
@@ -122,14 +126,16 @@ function ProductTable({
       if (sortKey === "tariffRate") {
         cmp = a.tariffRate - b.tariffRate;
       } else if (sortKey === "reports") {
-        cmp = (reportCounts[a.productId] ?? 0) - (reportCounts[b.productId] ?? 0);
+        cmp =
+          (reportsByProduct[a.productId]?.length ?? 0) -
+          (reportsByProduct[b.productId]?.length ?? 0);
       } else {
         cmp = String(a[sortKey]).localeCompare(String(b[sortKey]));
       }
       return sortDir === "asc" ? cmp : -cmp;
     });
     return sorted;
-  }, [query, sortKey, sortDir, reportCounts]);
+  }, [query, sortKey, sortDir, reportsByProduct]);
 
   return (
     <div className="product-table">
@@ -226,11 +232,28 @@ function ProductTable({
                     <span className="awaiting">awaiting input</span>
                   )}
                 </td>
-                <td>
-                  {(reportCounts[r.productId] ?? 0) > 0 ? (
-                    <span className="report-badge">
-                      {reportCounts[r.productId]} report
-                      {reportCounts[r.productId] > 1 ? "s" : ""}
+                <td
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenCategory(r.categoryId, true);
+                  }}
+                >
+                  {(reportsByProduct[r.productId]?.length ?? 0) > 0 ? (
+                    <span className="report-text">
+                      {reportsByProduct[r.productId][0].kind === "price"
+                        ? "💲 "
+                        : reportsByProduct[r.productId][0].kind === "origin"
+                        ? "🏷️ "
+                        : "🍁 "}
+                      {reportsByProduct[r.productId][0].text}
+                      {reportsByProduct[r.productId][0].location
+                        ? ` (${reportsByProduct[r.productId][0].location})`
+                        : ""}
+                      {reportsByProduct[r.productId].length > 1 && (
+                        <span className="more-reports">
+                          {" "}+{reportsByProduct[r.productId].length - 1} more
+                        </span>
+                      )}
                     </span>
                   ) : (
                     <span className="report-none">—</span>

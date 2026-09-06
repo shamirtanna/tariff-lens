@@ -106,7 +106,7 @@ function CommunitySection({ category }: { category: CategoryRecord }) {
   }
 
   return (
-    <section className="community">
+    <section className="community" id="community-section">
       <h3>What are you seeing in stores?</h3>
       <p className="community-intro">
         The parts we're least sure about — the price impact, which products are
@@ -332,17 +332,27 @@ function App() {
   // you click a table row. No routing library needed for this.
   const [page, setPage] = useState<"table" | "category" | "how" | "report">("table");
   const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
+  const [focusCommunity, setFocusCommunity] = useState(false);
 
-  function openCategory(id: string) {
+  function openCategory(id: string, community = false) {
     setOpenCategoryId(id);
+    setFocusCommunity(community);
     setPage("category");
   }
 
-  // Scroll to top whenever the page/view changes (so navigating to "How this
-  // works" or a category starts at the top, not wherever you were scrolled).
+  // On navigation: if we were asked to focus the community section, scroll to
+  // it; otherwise scroll to top.
   useEffect(() => {
+    if (page === "category" && focusCommunity) {
+      // Wait a tick for the category to render, then scroll to the community section.
+      const el = document.getElementById("community-section");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
     window.scrollTo(0, 0);
-  }, [page, openCategoryId]);
+  }, [page, openCategoryId, focusCommunity]);
 
   const openCategory_ = categories.find((c) => c.id === openCategoryId);
 
