@@ -31,14 +31,14 @@ function cascades(product: string): Alternative {
   return {
     name: "Cascades",
     madeIn: "Québec",
-    website: "https://www.cascades.com/en/about-us/our-company/hygiene-tissue-products",
+    website: "https://www.cascades.com/en/products-services/hygiene-tissue-solutions/consumer-cascades-fluff-tuff",
     description: `Québec-made ${product} (Cascades).`,
     whereToFind: "Most major Canadian grocery retailers.",
     honestNote: "Made in Canada per the manufacturer — not necessarily cheaper. Check the pack.",
     originConfidence: "verified",
     source: {
       label: "Cascades — hygiene & tissue products (manufacturer)",
-      url: "https://www.cascades.com/en/about-us/our-company/hygiene-tissue-products",
+      url: "https://www.cascades.com/en/products-services/hygiene-tissue-solutions/consumer-cascades-fluff-tuff",
       note: "States Canadian manufacturing (Québec).",
     },
   };
@@ -241,7 +241,7 @@ export const categories: CategoryRecord[] = [
       {
         name: "Cascades",
         madeIn: "Québec",
-        website: "https://www.cascades.com/en/about-us/our-company/hygiene-tissue-products",
+        website: "https://www.cascades.com/en/products-services/hygiene-tissue-solutions/consumer-cascades-fluff-tuff",
         description:
           "Québec-based tissue maker (toilet paper, paper towels, napkins). Its Fluff & Tuff line states it's made in Québec.",
         whereToFind: "Most major Canadian grocery retailers.",
@@ -250,7 +250,7 @@ export const categories: CategoryRecord[] = [
         originConfidence: "verified",
         source: {
           label: "Cascades — hygiene & tissue products (manufacturer)",
-          url: "https://www.cascades.com/en/about-us/our-company/hygiene-tissue-products",
+          url: "https://www.cascades.com/en/products-services/hygiene-tissue-solutions/consumer-cascades-fluff-tuff",
           note: "States Canadian manufacturing; Fluff & Tuff line 'fabriqués ici, au Québec'.",
         },
       },
