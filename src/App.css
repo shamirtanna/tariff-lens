@@ -429,3 +429,80 @@ button[type='submit'],
 .title-link:hover {
   text-decoration: underline;
 }
+
+/* ============================================================
+   MOBILE: reflow the wide table into stacked cards.
+   A 6-column data table can't fit a phone, so below 640px each
+   row becomes a card and each cell shows its data-label as a
+   prefix ("Label: value"). This is the standard responsive-table
+   pattern and reads far better than a cramped/scrolling table.
+   ============================================================ */
+@media (max-width: 640px) {
+  .app {
+    padding: 16px 14px 48px;
+  }
+
+  /* Turn the table + its parts into block-level cards. */
+  .product-table table,
+  .product-table tbody,
+  .product-table tr,
+  .product-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  /* Hide the header row (labels come from data-label instead). */
+  .product-table thead {
+    display: none;
+  }
+
+  /* Each row becomes a bordered card. */
+  .product-table tr {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 6px 4px;
+  }
+
+  /* Each cell: label on its own line, value below. */
+  .product-table td {
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .product-table tr td:last-child {
+    border-bottom: none;
+  }
+  .product-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text);
+    opacity: 0.7;
+    margin-bottom: 3px;
+    font-weight: 600;
+  }
+
+  /* Product name gets a bit more emphasis as the card "title". */
+  .product-table td[data-label="Product"] {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  /* Make the search + button full width and comfortable to tap. */
+  .table-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .big-search {
+    width: 100%;
+  }
+  .report-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+  }
+}

@@ -198,17 +198,17 @@ function ProductTable({
           <tbody>
             {rows.map((r) => (
               <tr key={r.productId}>
-                <td>{r.product}</td>
-                <td>{r.category}</td>
-                <td>{(r.tariffRate * 100).toFixed(0)}%</td>
-                <td className="impact">
+                <td data-label="Product">{r.product}</td>
+                <td data-label="Category">{r.category}</td>
+                <td data-label="Tariff">{(r.tariffRate * 100).toFixed(0)}%</td>
+                <td className="impact" data-label="Est. price increase">
                   {r.impactNote}
                   <span className="formula">
                     {(r.tariffRate * 100).toFixed(0)}% ×{" "}
                     {(r.usImportShare * 100).toFixed(0)}% US-made × ~50% to shelf
                   </span>
                 </td>
-                <td>
+                <td data-label="Made in Canada option">
                   {r.alternative ? (
                     <>
                       {r.alternative.name}
@@ -234,6 +234,7 @@ function ProductTable({
                 </td>
                 <td
                   className="community-cell"
+                  data-label="Community input"
                   onClick={() => onOpenCategory(r.categoryId, true)}
                 >
                   {(reportsByProduct[r.productId]?.length ?? 0) > 0 ? (
