@@ -420,3 +420,12 @@ button[type='submit'],
 .community-cell:hover {
   background: var(--accent-bg);
 }
+
+/* The title links home but should look like a title, not a link. */
+.title-link {
+  color: inherit;
+  text-decoration: none;
+}
+.title-link:hover {
+  text-decoration: underline;
+}

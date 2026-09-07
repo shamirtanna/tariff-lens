@@ -1,4 +1,13 @@
 import { useEffect, useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  useParams,
+  useLocation,
+} from "react-router-dom";
 import { categories } from "./data";
 import { estimate } from "./calculator";
 import { getApprovedSubmissions, submit } from "./community";
@@ -326,25 +335,12 @@ function CategoryView({ category }: { category: CategoryRecord }) {
   );
 }
 
-function App() {
-  // Three views: the findability TABLE (entry point), a CATEGORY detail (depth),
-  // and HOW-this-works. `openCategoryId` remembers which category to show when
-  // you click a table row. No routing library needed for this.
-  const [page, setPage] = useState<"table" | "category" | "how" | "report">("table");
-  const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
-  const [focusCommunity, setFocusCommunity] = useState(false);
-
-  function openCategory(id: string, community = false) {
-    setOpenCategoryId(id);
-    setFocusCommunity(community);
-    setPage("category");
-  }
-
-  // On navigation: if we were asked to focus the community section, scroll to
-  // it; otherwise scroll to top.
+// Scrolls to top on every route change (and to the community section if the URL
+// asks for it via ?focus=community). Replaces the old manual scroll effect.
+function ScrollManager() {
+  const location = useLocation();
   useEffect(() => {
-    if (page === "category" && focusCommunity) {
-      // Wait a tick for the category to render, then scroll to the community section.
+    if (location.search.includes("focus=community")) {
       const el = document.getElementById("community-section");
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -352,84 +348,106 @@ function App() {
       }
     }
     window.scrollTo(0, 0);
-  }, [page, openCategoryId, focusCommunity]);
+  }, [location]);
+  return null;
+}
 
-  const openCategory_ = categories.find((c) => c.id === openCategoryId);
-
+// The main table view (home page).
+function TablePage() {
+  const navigate = useNavigate();
   return (
-    <main className="app">
-      <h1>Tariff Lens</h1>
-      <p className="tagline">
-        How do Canada's September 8 tariffs impact Canadian consumers? Find your
-        products, what's affected, and made-in-Canada options.
-      </p>
-
-      {page === "how" && (
-        <>
-          <button
-            type="button"
-            className="link-button back"
-            onClick={() => setPage("table")}
-          >
-            ← Back
-          </button>
-          <HowThisWorks />
-        </>
-      )}
-
-      {page === "table" && (
-        <>
-          <ProductTable
-            onOpenCategory={openCategory}
-            onReportSighting={() => setPage("report")}
-          />
-          <p className="feedback-row">
-            <a
-              className="feedback-button"
-              href="mailto:shamir.tanna@gmail.com?subject=Tariff%20Lens%20feedback"
-            >
-              Send me feedback and ideas
-            </a>
-          </p>
-        </>
-      )}
-
-      {page === "report" && (
-        <>
-          <button
-            type="button"
-            className="link-button back"
-            onClick={() => setPage("table")}
-          >
-            ← Back to all products
-          </button>
-          <ReportPage />
-        </>
-      )}
-
-      {page === "category" && openCategory_ && (
-        <>
-          <button
-            type="button"
-            className="link-button back"
-            onClick={() => setPage("table")}
-          >
-            ← Back to all products
-          </button>
-          <CategoryView category={openCategory_} />
-        </>
-      )}
-
-      <footer className="footer">
-        <button
-          type="button"
-          className="link-button"
-          onClick={() => setPage("how")}
+    <>
+      <ProductTable
+        onOpenCategory={(id, focusCommunity) =>
+          navigate(`/category/${id}${focusCommunity ? "?focus=community" : ""}`)
+        }
+        onReportSighting={() => navigate("/report")}
+      />
+      <p className="feedback-row">
+        <a
+          className="feedback-button"
+          href="mailto:shamir.tanna@gmail.com?subject=Tariff%20Lens%20feedback"
         >
-          How this works · methodology · what this can't do · what's next
-        </button>
-      </footer>
-    </main>
+          Send me feedback and ideas
+        </a>
+      </p>
+    </>
+  );
+}
+
+// A category detail page — reads which category from the URL (/category/:id).
+function CategoryPage() {
+  const { id } = useParams();
+  const category = categories.find((c) => c.id === id);
+  if (!category) {
+    return (
+      <>
+        <Link className="link-button back" to="/">
+          ← Back to all products
+        </Link>
+        <p>Category not found.</p>
+      </>
+    );
+  }
+  return (
+    <>
+      <Link className="link-button back" to="/">
+        ← Back to all products
+      </Link>
+      <CategoryView category={category} />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <ScrollManager />
+      <main className="app">
+        <h1>
+          <Link to="/" className="title-link">
+            Tariff Lens
+          </Link>
+        </h1>
+        <p className="tagline">
+          How do Canada's September 8 tariffs impact Canadian consumers? Find your
+          products, what's affected, and made-in-Canada options.
+        </p>
+
+        <Routes>
+          <Route path="/" element={<TablePage />} />
+          <Route path="/category/:id" element={<CategoryPage />} />
+          <Route
+            path="/report"
+            element={
+              <>
+                <Link className="link-button back" to="/">
+                  ← Back to all products
+                </Link>
+                <ReportPage />
+              </>
+            }
+          />
+          <Route
+            path="/how-it-works"
+            element={
+              <>
+                <Link className="link-button back" to="/">
+                  ← Back
+                </Link>
+                <HowThisWorks />
+              </>
+            }
+          />
+        </Routes>
+
+        <footer className="footer">
+          <Link className="link-button" to="/how-it-works">
+            How this works · methodology · what this can't do · what's next
+          </Link>
+        </footer>
+      </main>
+    </BrowserRouter>
   );
 }
 
